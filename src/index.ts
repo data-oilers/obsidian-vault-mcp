@@ -8,11 +8,35 @@ import { listSubjects } from "./tools/list-subjects.js";
 import { readNote } from "./tools/read-note.js";
 import { appendToNote } from "./tools/append-to-note.js";
 import { updateNote } from "./tools/update-note.js";
+import {
+  getRepoContext,
+  getFileHistory,
+  getCommitInfo,
+  getRepoStats,
+  listRepos,
+  GetRepoContextInputSchema,
+  GetFileHistoryInputSchema,
+  GetCommitInfoInputSchema,
+  GetRepoStatsInputSchema,
+} from "./tools/git-tools.js";
+import { createMeetingNote, CreateMeetingNoteInputSchema } from "./tools/meeting-tools.js";
+import {
+  queryMemory,
+  getTeamContext,
+  listActionItems,
+  QueryMemoryInputSchema,
+  GetTeamContextInputSchema,
+  ListActionItemsInputSchema,
+} from "./tools/memory-tools.js";
+import { repoDiscovery } from "./git/repo-discovery.js";
 
 const server = new McpServer({
-  name: "obsidian-vault",
-  version: "1.0.0",
+  name: "obsidian-vault-team-context",
+  version: "1.1.0",
 });
+
+// Initialize repo discovery
+await repoDiscovery.updateReposCache();
 
 const vaultEnum = z.enum(["FACULTAD", "DATAOILERS"]);
 const noteTypeEnum = z.enum(["class-summary", "concept", "exercise", "research", "general"]);
@@ -104,6 +128,99 @@ server.tool(
   },
   async (params) => {
     const result = await updateNote(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+// Git Tools
+server.tool(
+  "get_repo_context",
+  "Obtener contexto reciente de un repositorio (commits, estadísticas, rama actual)",
+  GetRepoContextInputSchema.shape,
+  async (params: any) => {
+    const result = await getRepoContext(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "get_file_history",
+  "Obtener histórico de commits de un archivo específico",
+  GetFileHistoryInputSchema.shape,
+  async (params: any) => {
+    const result = await getFileHistory(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "get_commit_info",
+  "Obtener información detallada de un commit específico",
+  GetCommitInfoInputSchema.shape,
+  async (params: any) => {
+    const result = await getCommitInfo(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "get_repo_stats",
+  "Obtener estadísticas de commits por autor",
+  GetRepoStatsInputSchema.shape,
+  async (params: any) => {
+    const result = await getRepoStats(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "list_repos",
+  "Listar todos los repositorios siendo trackeados",
+  {},
+  async () => {
+    const result = await listRepos();
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+// Meeting Tools
+server.tool(
+  "create_meeting_note",
+  "Crear una nota de reunión estructurada que se guarda automáticamente en Memory",
+  CreateMeetingNoteInputSchema.shape,
+  async (params: any) => {
+    const result = await createMeetingNote(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+// Memory Tools
+server.tool(
+  "query_memory",
+  "Buscar en Memory por decisiones, reuniones, items de acción",
+  QueryMemoryInputSchema.shape,
+  async (params: any) => {
+    const result = await queryMemory(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "get_team_context",
+  "Obtener snapshot del contexto del equipo (últimas semana/mes)",
+  GetTeamContextInputSchema.shape,
+  async (params: any) => {
+    const result = await getTeamContext(params);
+    return { content: [{ type: "text", text: result }] };
+  },
+);
+
+server.tool(
+  "list_action_items",
+  "Listar items de acción pendientes",
+  ListActionItemsInputSchema.shape,
+  async (params: any) => {
+    const result = await listActionItems(params);
     return { content: [{ type: "text", text: result }] };
   },
 );

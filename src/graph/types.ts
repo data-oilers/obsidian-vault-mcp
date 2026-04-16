@@ -5,7 +5,9 @@ export type NodeType =
   | "commit"
   | "person"
   | "repo"
-  | "topic";
+  | "topic"
+  | "limitation"
+  | "objective";
 
 export type EdgeType =
   | "implements"
@@ -18,7 +20,10 @@ export type EdgeType =
   | "authored"
   | "changes"
   | "tagged_with"
-  | "part_of";
+  | "part_of"
+  | "defines"
+  | "constrains"
+  | "assigned_to";
 
 export interface GraphNode {
   id: string;

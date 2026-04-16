@@ -10,6 +10,8 @@ const SHAPES: Record<NodeType, readonly [string, string]> = {
   person:        ["((", "))"],   // circle
   repo:          ["[(", ")]"],   // cylinder
   topic:         ["{{", "}}"],   // hexagon
+  limitation:    ["[/", "/]"],   // parallelogram
+  objective:     ["[[", "]]"],   // subroutine
 } as const;
 
 const STYLE: Record<NodeType, string> = {
@@ -20,6 +22,8 @@ const STYLE: Record<NodeType, string> = {
   person:        "fill:#E91E63,color:#fff,stroke:#880E4F",
   repo:          "fill:#9C27B0,color:#fff,stroke:#6A1B9A",
   topic:         "fill:#00BCD4,color:#000,stroke:#006064",
+  limitation:    "fill:#F44336,color:#fff,stroke:#B71C1F",
+  objective:     "fill:#8BC34A,color:#fff,stroke:#558B2F",
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

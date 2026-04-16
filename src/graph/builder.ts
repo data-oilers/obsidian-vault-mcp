@@ -71,6 +71,38 @@ export async function buildKnowledgeGraph(): Promise<KnowledgeGraph> {
         status: entry.status,
       });
 
+      // Phase 4: audio pipeline extended data — objectives, limitations, external people
+      const ext = entry.extendedData as Record<string, unknown> | undefined;
+      if (ext) {
+        const objectives = ext.objectives as string[] | undefined;
+        if (objectives) {
+          for (let i = 0; i < objectives.length; i++) {
+            ensureNode(`objective-${entry.id}-${i}`, "objective", objectives[i], {
+              meetingId: entry.id,
+            });
+          }
+        }
+        const limitations = ext.limitations as string[] | undefined;
+        if (limitations) {
+          for (let i = 0; i < limitations.length; i++) {
+            ensureNode(`limitation-${entry.id}-${i}`, "limitation", limitations[i], {
+              meetingId: entry.id,
+            });
+          }
+        }
+        const externalPeople = ext.externalPeople as Array<{ name: string; role?: string; company?: string }> | undefined;
+        if (externalPeople) {
+          for (const person of externalPeople) {
+            const label = person.company ? `${person.name} (${person.company})` : person.name;
+            ensureNode(`person-${person.name}`, "person", label, {
+              role: person.role ?? "",
+              company: person.company ?? "",
+              external: true,
+            });
+          }
+        }
+      }
+
     } else if (entry.type === "decision") {
       ensureNode(entry.id, "decision", entry.title, {
         timestamp: entry.timestamp,
@@ -130,6 +162,36 @@ export async function buildKnowledgeGraph(): Promise<KnowledgeGraph> {
       // Meeting → Repo (affects)
       for (const repo of entry.relatedRepos ?? []) {
         ensureEdge(entry.id, `repo-${repo}`, "affects");
+      }
+
+      // Phase 4: audio pipeline edges
+      const ext = entry.extendedData as Record<string, unknown> | undefined;
+      if (ext) {
+        const objectives = ext.objectives as string[] | undefined;
+        if (objectives) {
+          for (let i = 0; i < objectives.length; i++) {
+            const objId = `objective-${entry.id}-${i}`;
+            // Meeting → Objective (defines)
+            ensureEdge(entry.id, objId, "defines");
+          }
+        }
+        const limitations = ext.limitations as string[] | undefined;
+        if (limitations && objectives) {
+          for (let li = 0; li < limitations.length; li++) {
+            const limId = `limitation-${entry.id}-${li}`;
+            // Limitation → each Objective (constrains)
+            for (let oi = 0; oi < objectives.length; oi++) {
+              ensureEdge(limId, `objective-${entry.id}-${oi}`, "constrains");
+            }
+          }
+        }
+        const externalPeople = ext.externalPeople as Array<{ name: string }> | undefined;
+        if (externalPeople) {
+          for (const person of externalPeople) {
+            // External Person → Meeting (participates)
+            ensureEdge(`person-${person.name}`, entry.id, "participates");
+          }
+        }
       }
 
     } else if (entry.type === "decision") {

@@ -19,6 +19,8 @@ const NODE_TYPE_ENUM = z.enum([
   "person",
   "repo",
   "topic",
+  "limitation",
+  "objective",
 ]);
 
 export const GetKnowledgeGraphInputSchema = z.object({

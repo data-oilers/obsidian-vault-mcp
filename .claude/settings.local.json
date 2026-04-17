@@ -8,7 +8,23 @@
       "Bash(ls -la D:/obsidian-vault-mcp/dist/*.js)",
       "mcp__obsidian-vault-team-context__sync_graph_to_obsidian",
       "mcp__obsidian-vault-team-context__get_repo_stats",
-      "WebSearch"
+      "WebSearch",
+      "Bash(python3 *)",
+      "Bash(PYTHONIOENCODING=utf-8 python3 *)",
+      "Bash(timeout 30 node dist/index.js)",
+      "Bash(rm -f ~/Documentos/DATAOILERS/grabaciones/incoming/test-meeting.mp3)",
+      "Bash(timeout 60 node dist/index.js)",
+      "Bash(timeout 120 node dist/index.js)",
+      "Bash(timeout 180 node dist/index.js)",
+      "Read(//c/Users/riper/Documentos/DATAOILERS/grabaciones/processed/**)",
+      "Read(//c/Users/riper/Documentos/DATAOILERS/grabaciones/failed/**)",
+      "Bash(rm -rf ~/Documentos/DATAOILERS/grabaciones/failed/*)",
+      "Bash(rm -rf ~/Documentos/DATAOILERS/grabaciones/processed/*)",
+      "Bash(timeout 180 bash -c \"PYTHONIOENCODING=utf-8 python3 audio_pipeline.py\")",
+      "Bash([ -f ~/Documentos/DATAOILERS/Reuniones/*.md ])",
+      "Read(//c/Users/riper/Documentos/DATAOILERS/Reuniones/**)",
+      "Bash(cd \"D:\\\\\\\\obsidian-vault-mcp\")",
+      "Bash(npm install *)"
     ]
   }
 }

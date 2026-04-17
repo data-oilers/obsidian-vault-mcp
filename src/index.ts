@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
@@ -61,34 +62,15 @@ import {
   syncGraphToObsidian,
   SyncGraphToObsidianInputSchema,
 } from "./tools/obsidian-sync-tools.js";
-import {
-  transcribeAudio,
-  analyzeMeetingTranscript,
-  processMeetingRecording,
-  getAudioWatcherStatus,
-  TranscribeAudioInputSchema,
-  AnalyzeMeetingTranscriptInputSchema,
-  ProcessMeetingRecordingInputSchema,
-  GetAudioWatcherStatusInputSchema,
-  initializeAudioWatcher,
-} from "./tools/audio-tools.js";
 import { repoDiscovery } from "./git/repo-discovery.js";
 
 const server = new McpServer({
   name: "obsidian-vault-team-context",
-  version: "4.0.0",
+  version: "3.0.0",
 });
 
 // Initialize repo discovery
 await repoDiscovery.updateReposCache();
-
-// Initialize audio watcher (optional — doesn't block server if folders don't exist or deps fail)
-try {
-  initializeAudioWatcher();
-  console.error("[Audio] Watcher initialized successfully");
-} catch (err: any) {
-  console.error(`[Audio] Watcher initialization skipped: ${err.message}`);
-}
 
 const vaultEnum = z.enum(["FACULTAD", "DATAOILERS"]);
 const noteTypeEnum = z.enum(["class-summary", "concept", "exercise", "research", "general"]);
@@ -417,47 +399,6 @@ server.tool(
   SyncGraphToObsidianInputSchema.shape,
   async (params: any) => {
     const result = await syncGraphToObsidian(params);
-    return { content: [{ type: "text", text: result }] };
-  },
-);
-
-// Audio Pipeline Tools (Phase 4)
-server.tool(
-  "transcribe_audio",
-  "Transcribir un archivo de audio localmente usando Whisper (100% local, sin cloud)",
-  TranscribeAudioInputSchema.shape,
-  async (params: any) => {
-    const result = await transcribeAudio(params);
-    return { content: [{ type: "text", text: result }] };
-  },
-);
-
-server.tool(
-  "analyze_meeting_transcript",
-  "Analizar una transcripción de reunión con Claude API para extraer objetivos, roadmap, limitaciones, decisiones y action items",
-  AnalyzeMeetingTranscriptInputSchema.shape,
-  async (params: any) => {
-    const result = await analyzeMeetingTranscript(params);
-    return { content: [{ type: "text", text: result }] };
-  },
-);
-
-server.tool(
-  "process_meeting_recording",
-  "Pipeline completo: transcribir audio → analizar con IA → crear nota en Obsidian con integración automática a Memory y Knowledge Graph",
-  ProcessMeetingRecordingInputSchema.shape,
-  async (params: any) => {
-    const result = await processMeetingRecording(params);
-    return { content: [{ type: "text", text: result }] };
-  },
-);
-
-server.tool(
-  "get_audio_watcher_status",
-  "Estado del servicio de vigilancia de audio: carpetas vigiladas, archivos en proceso, historial reciente",
-  GetAudioWatcherStatusInputSchema.shape,
-  async (params: any) => {
-    const result = await getAudioWatcherStatus(params);
     return { content: [{ type: "text", text: result }] };
   },
 );

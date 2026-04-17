@@ -110,38 +110,6 @@ export function getTeamMemberByName(name: string): TeamMember | undefined {
   return TEAM_MEMBERS.find(member => member.name === name);
 }
 
-// ─── Audio Pipeline Configuration (Phase 4) ─────────────────────────────────
-
-export interface AudioConfig {
-  watchFolders: string[];
-  processedFolder: string;
-  failedFolder: string;
-  transcriptsFolder: string;
-  whisperModel: "tiny" | "small" | "medium";
-  language: string;
-  transcriptionBackend: "transformers" | "faster-whisper";
-  analysisModel: string;
-  defaultVault: string;
-  supportedFormats: string[];
-  autoProcess: boolean;
-}
-
-export const AUDIO_CONFIG: AudioConfig = {
-  watchFolders: [
-    join(HOME, "Documentos", "DATAOILERS", "grabaciones", "incoming"),
-  ],
-  processedFolder: join(HOME, "Documentos", "DATAOILERS", "grabaciones", "processed"),
-  failedFolder: join(HOME, "Documentos", "DATAOILERS", "grabaciones", "failed"),
-  transcriptsFolder: join(HOME, "Documentos", "DATAOILERS", "grabaciones", "transcripts"),
-  whisperModel: "small",
-  language: "es",
-  transcriptionBackend: "transformers",
-  analysisModel: "claude-sonnet-4-6",
-  defaultVault: "DATAOILERS",
-  supportedFormats: [".mp3", ".mp4", ".wav", ".m4a", ".ogg", ".webm", ".flac"],
-  autoProcess: true,
-};
-
 // Maps git commit author names → canonical team member name
 export const AUTHOR_ALIASES: Record<string, string> = {
   "emisorato1": "Emiliano",

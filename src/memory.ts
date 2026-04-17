@@ -2,11 +2,6 @@ import { z } from "zod";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { homedir } from "node:os";
-import {
-  AudioMetadataSchema,
-  RoadmapStepSchema,
-  ExtractedPersonSchema,
-} from "./audio/types.js";
 
 // --- Schemas ---
 
@@ -59,8 +54,6 @@ export const ContextEntrySchema = z.object({
   linkedActionItems: z.array(z.string()).optional(),
   impactSummary: ImpactSummarySchema.optional(),
   status: z.enum(["open", "in-progress", "completed", "pending"]).optional(),
-  // Phase 4: audio pipeline extended data
-  extendedData: z.record(z.unknown()).optional(),
 });
 
 export const MeetingEntrySchema = z.object({
@@ -74,12 +67,6 @@ export const MeetingEntrySchema = z.object({
   vault: z.string(),
   notePath: z.string(),
   relatedRepos: z.array(z.string()).optional(),
-  // Phase 4: audio pipeline fields
-  audioMetadata: AudioMetadataSchema.optional(),
-  objectives: z.array(z.string()).optional(),
-  roadmapSteps: z.array(RoadmapStepSchema).optional(),
-  limitations: z.array(z.string()).optional(),
-  externalPeople: z.array(ExtractedPersonSchema).optional(),
 });
 
 export type Decision = z.infer<typeof DecisionSchema>;
@@ -303,16 +290,7 @@ export class MemoryClient {
 
   async saveMeeting(entry: MeetingEntry): Promise<string> {
     const validated = MeetingEntrySchema.parse(entry);
-    // Use the provided ID so callers can reference it for decisions/action items
     const id = validated.id;
-
-    // Pack audio-specific fields into extendedData if present
-    const extendedData: Record<string, unknown> = {};
-    if (validated.audioMetadata) extendedData.audioMetadata = validated.audioMetadata;
-    if (validated.objectives) extendedData.objectives = validated.objectives;
-    if (validated.roadmapSteps) extendedData.roadmapSteps = validated.roadmapSteps;
-    if (validated.limitations) extendedData.limitations = validated.limitations;
-    if (validated.externalPeople) extendedData.externalPeople = validated.externalPeople;
 
     const contextEntry: ContextEntry = ContextEntrySchema.parse({
       id,
@@ -326,7 +304,6 @@ export class MemoryClient {
       linkedCommits: [],
       status: "open",
       tags: [],
-      extendedData: Object.keys(extendedData).length > 0 ? extendedData : undefined,
     });
 
     await this.persistence.save(contextEntry);

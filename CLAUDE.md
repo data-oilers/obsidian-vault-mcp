@@ -63,20 +63,6 @@ Las rutas son absolutas desde el home del usuario. Al clonar en otra máquina, a
 - `get_repo_decision_history` — Decisiones que afectaron un repo
 - `sync_graph_to_obsidian` — Sincronizar grafo a Obsidian
 
-### Audio Pipeline (Fase 4)
-- `transcribe_audio` — Transcripcion local con Whisper (sin cloud)
-- `analyze_meeting_transcript` — Analisis de transcripcion con Claude API
-- `process_meeting_recording` — Pipeline completo: audio -> transcripcion -> analisis -> nota Obsidian
-- `get_audio_watcher_status` — Estado del watcher de audio
-
-## Audio Pipeline
-
-El pipeline de audio vigila una carpeta (`~/Documentos/DATAOILERS/grabaciones/incoming/`) y procesa automaticamente archivos de audio:
-1. Transcripcion local con Whisper (`@xenova/transformers`)
-2. Analisis con Claude API para extraer objetivos, roadmap, limitaciones, decisiones, action items
-3. Creacion de nota en Obsidian + persistencia en Memory + Knowledge Graph
-
-Requiere `ANTHROPIC_API_KEY` en variables de entorno. Configuracion en `AUDIO_CONFIG` de `src/config.ts`.
 
 ## Stack
 

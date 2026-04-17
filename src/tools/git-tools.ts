@@ -2,6 +2,8 @@ import { z } from "zod";
 import { REPOS } from "../config.js";
 import { createGitUtils } from "../git/git-utils.js";
 import { RepoContext } from "../git/types.js";
+import { existsSync } from "node:fs";
+import * as githubClient from "../git/github-client.js";
 
 export const GetRepoContextInputSchema = z.object({
   repo: z.string().describe("Nombre del repositorio"),
@@ -43,8 +45,24 @@ export async function getRepoContext(input: GetRepoContextInput): Promise<string
   validateRepoExists(input.repo);
   const repoConfig = REPOS[input.repo];
 
-  const gitUtils = createGitUtils(repoConfig.localPath);
-  const context: RepoContext = gitUtils.getRepoContext(input.limit);
+  if (existsSync(repoConfig.localPath)) {
+    const gitUtils = createGitUtils(repoConfig.localPath);
+    const context: RepoContext = gitUtils.getRepoContext(input.limit);
+    return JSON.stringify(context, null, 2);
+  }
+
+  const commits = await githubClient.getRecentCommits(input.repo, input.limit);
+  const context = {
+    name: input.repo,
+    url: repoConfig.url,
+    commits: commits.map(c => ({
+      hash: c.hash,
+      author: c.author,
+      date: c.date,
+      message: c.message,
+    })),
+    note: "Data from GitHub API (repo not available locally)",
+  };
 
   return JSON.stringify(context, null, 2);
 }
@@ -53,34 +71,78 @@ export async function getFileHistory(input: GetFileHistoryInput): Promise<string
   validateRepoExists(input.repo);
   const repoConfig = REPOS[input.repo];
 
-  const gitUtils = createGitUtils(repoConfig.localPath);
-  const history = gitUtils.getFileHistory(input.filePath, input.limit);
+  if (existsSync(repoConfig.localPath)) {
+    const gitUtils = createGitUtils(repoConfig.localPath);
+    const history = gitUtils.getFileHistory(input.filePath, input.limit);
+    return JSON.stringify(history, null, 2);
+  }
 
-  return JSON.stringify(history, null, 2);
+  const history = await githubClient.getFileHistory(
+    input.repo,
+    input.filePath,
+    input.limit
+  );
+
+  const result = {
+    file: input.filePath,
+    repo: input.repo,
+    commits: history,
+    note: "Data from GitHub API (repo not available locally)",
+  };
+
+  return JSON.stringify(result, null, 2);
 }
 
 export async function getCommitInfo(input: GetCommitInfoInput): Promise<string> {
   validateRepoExists(input.repo);
   const repoConfig = REPOS[input.repo];
 
-  const gitUtils = createGitUtils(repoConfig.localPath);
-  const commitInfo = gitUtils.getCommitInfo(input.hash);
+  if (existsSync(repoConfig.localPath)) {
+    const gitUtils = createGitUtils(repoConfig.localPath);
+    const commitInfo = gitUtils.getCommitInfo(input.hash);
+    return JSON.stringify(commitInfo, null, 2);
+  }
 
-  return JSON.stringify(commitInfo, null, 2);
+  const commitInfo = await githubClient.getCommit(input.repo, input.hash);
+  const result = {
+    ...commitInfo,
+    note: "Data from GitHub API (repo not available locally)",
+  };
+
+  return JSON.stringify(result, null, 2);
 }
 
 export async function getRepoStats(input: GetRepoStatsInput): Promise<string> {
   validateRepoExists(input.repo);
   const repoConfig = REPOS[input.repo];
 
-  const gitUtils = createGitUtils(repoConfig.localPath);
-  const stats = gitUtils.getStatsThisMonth();
+  if (existsSync(repoConfig.localPath)) {
+    const gitUtils = createGitUtils(repoConfig.localPath);
+    const stats = gitUtils.getStatsThisMonth();
+
+    const result = {
+      name: stats.name,
+      commitsByAuthor: stats.commitsByAuthor,
+      activeBranches: stats.activeBranches,
+      lastCommitDate: stats.lastCommitDate.toISOString(),
+    };
+
+    return JSON.stringify(result, null, 2);
+  }
+
+  const stats = await githubClient.getAuthorStats(
+    input.repo,
+    input.timeframe
+  );
 
   const result = {
-    name: stats.name,
-    commitsByAuthor: stats.commitsByAuthor,
-    activeBranches: stats.activeBranches,
-    lastCommitDate: stats.lastCommitDate.toISOString(),
+    name: input.repo,
+    timeframe: input.timeframe,
+    commitsByAuthor: stats.map((s: any) => ({
+      author: s.author,
+      commits: s.commits,
+    })),
+    note: "Data from GitHub API (repo not available locally)",
   };
 
   return JSON.stringify(result, null, 2);

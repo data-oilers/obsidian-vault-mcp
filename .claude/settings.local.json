@@ -17,7 +17,8 @@
       "Bash(timeout 120 node dist/index.js)",
       "Bash(timeout 180 node dist/index.js)",
       "Bash(cd \"D:\\\\\\\\obsidian-vault-mcp\")",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(timeout 5 node dist/index.js)"
     ]
   }
 }

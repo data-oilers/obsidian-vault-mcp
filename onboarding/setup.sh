@@ -123,34 +123,121 @@ backup_if_exists() {
   fi
 }
 
-copy_template() {
-  local name="$1"
-  local src="$ONBOARDING_DIR/templates/$name"
-  local dst="$CLAUDE_DIR/$name"
+#  Merge no-destructivo de CLAUDE.md.
+#  Inserta/actualiza un bloque delimitado por marcadores. Preserva el resto del archivo
+#  (config personal, RTK, otras secciones). Si el archivo no existe, crea uno con solo el bloque.
+merge_claude_md() {
+  local src="$ONBOARDING_DIR/templates/CLAUDE.md"
+  local dst="$CLAUDE_DIR/CLAUDE.md"
+  local begin="<!-- BEGIN dataoilers-team — managed by onboarding/setup.sh, no editar a mano -->"
+  local end="<!-- END dataoilers-team -->"
 
   if [[ ! -f "$src" ]]; then
     err "No existe el template $src"
     return
   fi
 
-  if [[ -f "$dst" ]]; then
-    if cmp -s "$src" "$dst"; then
-      log "$name ya idéntico al template. OK."
-      return
-    fi
-    ask "$dst difiere del template. ¿Sobrescribir? [y/N]"
-    if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
-      warn "$name conservado. Revisá manualmente."
-      return
-    fi
-    backup_if_exists "$dst"
+  local block
+  block="$(printf '%s\n%s\n%s\n' "$begin" "$(cat "$src")" "$end")"
+
+  if [[ ! -f "$dst" ]]; then
+    printf '%s\n' "$block" > "$dst"
+    log "CLAUDE.md creado con bloque dataoilers-team → $dst"
+    return
   fi
-  cp "$src" "$dst"
-  log "Copiado: $name → $dst"
+
+  backup_if_exists "$dst"
+
+  if grep -qF "$begin" "$dst" && grep -qF "$end" "$dst"; then
+    # Reemplazar bloque existente preservando el resto.
+    BEGIN="$begin" END="$end" SRC="$src" node - "$dst" <<'NODE'
+const fs = require('fs');
+const dst = process.argv[2];
+const begin = process.env.BEGIN, end = process.env.END;
+const src = fs.readFileSync(process.env.SRC, 'utf8');
+const cur = fs.readFileSync(dst, 'utf8');
+const i = cur.indexOf(begin), j = cur.indexOf(end);
+if (i < 0 || j < 0 || j < i) { console.error('marcadores corruptos'); process.exit(1); }
+const block = `${begin}\n${src.replace(/\n$/, '')}\n${end}`;
+const out = cur.slice(0, i) + block + cur.slice(j + end.length);
+fs.writeFileSync(dst, out);
+NODE
+    log "CLAUDE.md: bloque dataoilers-team actualizado (resto preservado)"
+  else
+    # Append: tu config existente queda intacta arriba del bloque.
+    {
+      [[ -s "$dst" ]] && tail -c1 "$dst" | grep -q . && printf '\n'  # asegurar newline final
+      printf '\n%s\n' "$block"
+    } >> "$dst"
+    log "CLAUDE.md: bloque dataoilers-team appendeado al final (config existente preservada)"
+  fi
 }
 
-copy_template CLAUDE.md
-copy_template settings.json
+#  Merge no-destructivo de settings.json.
+#  Deep-merge: las keys que YA existen en el archivo del usuario ganan; solo se agregan las que faltan.
+#  Para `enabledPlugins` y `extraKnownMarketplaces` se hace union (no replace) para no perder lo del usuario.
+merge_settings_json() {
+  local src="$ONBOARDING_DIR/templates/settings.json"
+  local dst="$CLAUDE_DIR/settings.json"
+
+  if [[ ! -f "$src" ]]; then
+    err "No existe el template $src"
+    return
+  fi
+
+  if [[ ! -f "$dst" ]]; then
+    cp "$src" "$dst"
+    log "settings.json creado desde template → $dst"
+    return
+  fi
+
+  # Validar que ambos sean JSON válido antes de tocar nada.
+  if ! node -e "JSON.parse(require('fs').readFileSync('$dst','utf8'))" 2>/dev/null; then
+    err "$dst no es JSON válido. Abortando merge para no romperlo."
+    return
+  fi
+
+  backup_if_exists "$dst"
+
+  SRC="$src" DST="$dst" node - <<'NODE'
+const fs = require('fs');
+const src = JSON.parse(fs.readFileSync(process.env.SRC, 'utf8'));
+const dst = JSON.parse(fs.readFileSync(process.env.DST, 'utf8'));
+
+// Merge conservador: las keys existentes del usuario tienen prioridad.
+// Para objetos, recursión. Para arrays/primitivos, NO pisar si ya existe en dst.
+function merge(target, source) {
+  for (const k of Object.keys(source)) {
+    const sv = source[k];
+    if (!(k in target)) {
+      target[k] = sv;
+    } else if (sv && typeof sv === 'object' && !Array.isArray(sv) &&
+               target[k] && typeof target[k] === 'object' && !Array.isArray(target[k])) {
+      merge(target[k], sv);
+    }
+    // else: ya está seteado en dst → respetar valor del usuario.
+  }
+}
+merge(dst, src);
+
+// Casos especiales: union de plugins y marketplaces (no perder los del usuario, agregar los del equipo).
+// (El merge genérico ya los dejó intactos si existían; esto solo ASEGURA que las del template estén.)
+for (const k of ['enabledPlugins', 'extraKnownMarketplaces']) {
+  if (src[k]) {
+    dst[k] = dst[k] || {};
+    for (const inner of Object.keys(src[k])) {
+      if (!(inner in dst[k])) dst[k][inner] = src[k][inner];
+    }
+  }
+}
+
+fs.writeFileSync(process.env.DST, JSON.stringify(dst, null, 2) + '\n');
+NODE
+  log "settings.json: keys del template mergeadas (existentes del usuario preservadas)"
+}
+
+merge_claude_md
+merge_settings_json
 
 # ───────────────────────────────────────────────────────
 sec "4. Meta vault (dataoilers-vault-org)"

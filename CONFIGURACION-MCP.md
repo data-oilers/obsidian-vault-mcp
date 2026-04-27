@@ -148,10 +148,23 @@ Click "Add MCP Server" y completa:
 Name: obsidian-vault-team-context
 Type: StdIO
 Command: node
-Arguments: D:\obsidian-vault-mcp\dist\index.js
+Arguments: <ruta absoluta a dist/index.js>
 ```
 
-**Nota:** La ruta DEBE ser absoluta y DEBE apuntar a `dist/index.js`
+Ejemplos por OS:
+
+```bash
+# macOS
+/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+
+# Linux
+/home/<usuario>/obsidian-vault-mcp/dist/index.js
+
+# Windows (forward slash recomendado en JSON)
+C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+```
+
+**Nota:** La ruta DEBE ser absoluta y DEBE apuntar a `dist/index.js`. En Windows usá `/` o `\\` (doble backslash) — no `\` solo.
 
 ### 3c. Reinicia Claude Code
 
@@ -223,7 +236,7 @@ Debería crear una nota en tu vault FACULTAD en la carpeta `Reuniones/`.
 ### Error: "MCP not found"
 - Reinicia Claude Code
 - Verifica la ruta en el MCP server config
-- Abre terminal y prueba: `node D:\obsidian-vault-mcp\dist\index.js`
+- Abre terminal y prueba: `node <ruta-absoluta>/dist/index.js` (ajustá según tu OS)
 
 ### Error: "Repositorio no encontrado"
 - Si usas repos, asegúrate que GITHUB_TOKEN está configurado

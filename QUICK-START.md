@@ -16,7 +16,19 @@ El MCP está **100% listo para probar**. Sigue estos pasos:
 Name:      obsidian-vault-team-context
 Type:      StdIO (o similar)
 Command:   node
-Arguments: D:\obsidian-vault-mcp\dist\index.js
+Arguments: <ruta absoluta a dist/index.js>
+```
+
+Ejemplos por OS (ajustá al path real donde clonaste el repo):
+
+```bash
+# macOS / Linux
+/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+/home/<usuario>/obsidian-vault-mcp/dist/index.js
+
+# Windows (forward slash o doble backslash)
+C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+C:\\Users\\<usuario>\\obsidian-vault-mcp\\dist\\index.js
 ```
 
 5. **Reinicia Claude Code completamente** (cierra y reabre)
@@ -57,7 +69,7 @@ Inputs:
 
 **Esperado:** JSON con `success: true` y ruta de nota creada
 
-**Nota:** La nota se crea en `C:\Users\riper\Documentos\FACULTAD\Reuniones\2026-04-15-test-decision-linking.md`
+**Nota:** La nota se crea en `<vault FACULTAD>/Reuniones/2026-04-15-test-decision-linking.md` — por default `~/Documentos/FACULTAD/...` (cross-platform).
 
 ## Paso 4: Prueba búsqueda avanzada
 
@@ -112,11 +124,11 @@ Inputs:
 
 ### "MCP not found / tool not found"
 ```bash
-# Verifica que el server está corriendo
-# Linux/Mac:
+# Verifica que el server está corriendo (ajustá al path donde clonaste)
+# macOS / Linux:
 node ~/obsidian-vault-mcp/dist/index.js
-# Windows:
-node D:\obsidian-vault-mcp\dist\index.js
+# Windows (PowerShell o CMD):
+node C:\Users\<usuario>\obsidian-vault-mcp\dist\index.js
 ```
 Si sale error, reporta el error exacto.
 

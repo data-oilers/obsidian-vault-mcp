@@ -32,7 +32,7 @@ npm run build
   "mcpServers": {
     "obsidian-vault-team-context": {
       "command": "node",
-      "args": ["D:/obsidian-vault-mcp/dist/index.js"]
+      "args": ["/ruta/absoluta/a/obsidian-vault-mcp/dist/index.js"]
     }
   }
 }
@@ -416,15 +416,19 @@ Luego abrir el vault en Obsidian → Graph View (`Ctrl+G`) para ver las conexion
 
 ## Vaults y repos disponibles
 
-| Vault | Path | Git |
-|-------|------|-----|
-| `FACULTAD` | `C:\Users\riper\Documentos\FACULTAD` | sí |
-| `DATAOILERS` | `C:\Users\riper\Documentos\DATAOILERS` | no |
-| `PROYECTOS` | `C:\Users\riper\Documentos\PROYECTOS` | no |
+Paths default (cross-platform, basados en `homedir()`). Override via env vars `VAULTS_<NAME>_PATH` y `REPO_<NAME>_PATH`.
 
-| Repo | Org | Path local |
-|------|-----|------------|
-| `enterprise-ai-platform` | data-oilers | `D:\repos\data-oilers\enterprise-ai-platform` |
-| `poc-macro-riesgo` | data-oilers | `D:\repos\data-oilers\poc-macro-riesgo` |
+| Vault | Path default | Git |
+|-------|--------------|-----|
+| `FACULTAD` | `~/Documentos/FACULTAD` | sí |
+| `DATAOILERS` | `~/Documentos/DATAOILERS` | no |
+| `PROYECTOS` | `~/Documentos/PROYECTOS` | no |
+
+| Repo | Org | Path local default |
+|------|-----|--------------------|
+| `enterprise-ai-platform` | data-oilers | `~/repos/data-oilers/enterprise-ai-platform` |
+| `poc-macro-riesgo` | data-oilers | `~/repos/data-oilers/poc-macro-riesgo` |
+
+> En Windows, `~` se expande a `C:\Users\<usuario>` (via `os.homedir()`).
 
 Para agregar repos: editar `REPOS` en `src/config.ts` y recompilar.

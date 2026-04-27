@@ -86,7 +86,7 @@ fi
 MCP_ENV="$MCP_DIR/.env"
 if [[ -f "$MCP_ENV" ]]; then
   pass ".env existe"
-  if grep -qE "^GITHUB_TOKEN=ghp_" "$MCP_ENV"; then
+  if grep -qE "^GITHUB_TOKEN=ghp_" "$MCP_ENV" && ! grep -qE "^GITHUB_TOKEN=ghp_your_token_here$" "$MCP_ENV"; then
     pass "GITHUB_TOKEN seteado en .env"
   else
     warn "GITHUB_TOKEN no seteado o es placeholder. Tools de git no van a funcionar."
@@ -100,19 +100,21 @@ else
   warn "$MCP_ENV no existe. Copiá .env.example a .env y completá."
 fi
 
-# Smoke: arrancar MCP, esperar que no crashee antes de 2s con stdin EOF
+# Smoke: arrancar MCP. Versión portable (macOS no trae GNU `timeout`):
+# lanzamos en background con stdin abierto, dormimos 2s, comprobamos si sigue vivo.
 if [[ -f "$MCP_ENTRY" ]]; then
   TMP_LOG=$(mktemp)
-  if timeout 2 node "$MCP_ENTRY" </dev/null >/dev/null 2>"$TMP_LOG"; then
-    pass "MCP arranca sin crash"
+  # `< /dev/zero` mantiene stdin abierto (un MCP server termina si stdin se cierra).
+  node "$MCP_ENTRY" < /dev/zero >/dev/null 2>"$TMP_LOG" &
+  MCP_PID=$!
+  sleep 2
+  if kill -0 "$MCP_PID" 2>/dev/null; then
+    pass "MCP arranca y queda esperando stdin (OK)"
+    kill "$MCP_PID" 2>/dev/null
+    wait "$MCP_PID" 2>/dev/null || true
   else
-    RC=$?
-    if [[ $RC -eq 124 ]]; then
-      pass "MCP arranca y queda esperando stdin (OK)"
-    else
-      fail "MCP crasheó al arrancar (rc=$RC). Log:"
-      sed 's/^/    /' "$TMP_LOG" >&2
-    fi
+    fail "MCP crasheó al arrancar. Log:"
+    sed 's/^/    /' "$TMP_LOG" >&2
   fi
   rm -f "$TMP_LOG"
 fi

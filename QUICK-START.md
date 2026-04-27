@@ -7,6 +7,29 @@ El MCP está **100% listo para probar**. Sigue estos pasos:
 
 ## Paso 1: Registrar en Claude Code (1 minuto)
 
+### Opción A — CLI (recomendada, 1 comando)
+
+Desde cualquier terminal, ajustando el path al lugar donde clonaste el repo:
+
+```bash
+# macOS / Linux
+claude mcp add -s user obsidian-vault-team-context -- node "$HOME/obsidian-vault-mcp/dist/index.js"
+
+# Windows (PowerShell)
+claude mcp add -s user obsidian-vault-team-context -- node "C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js"
+```
+
+`-s user` lo registra a nivel usuario (`~/.claude.json`) → disponible en todos tus proyectos, no solo este. Si lo querés solo para este repo, usá `-s project` (crea `.mcp.json`) o `-s local` (default, solo en este checkout).
+
+Verificá que conectó:
+
+```bash
+claude mcp list | grep obsidian
+# Esperado: obsidian-vault-team-context: node ... - ✓ Connected
+```
+
+### Opción B — Settings UI (manual)
+
 1. Abre **Claude Code Settings**
 2. Busca **"MCP Servers"** o **"Model Context Protocol"**
 3. Click **"Add Server"** / **"+"**
@@ -19,7 +42,7 @@ Command:   node
 Arguments: <ruta absoluta a dist/index.js>
 ```
 
-Ejemplos por OS (ajustá al path real donde clonaste el repo):
+Ejemplos de path por OS (ajustá al real):
 
 ```bash
 # macOS / Linux

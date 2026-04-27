@@ -282,9 +282,14 @@ Setup automático listo. Pendientes que no puedo hacer por vos:
   [ ] Instalar Obsidian (ver 01-INSTALACION.md)
       Y abrirlo como "Open folder as vault" → ${VAULT_DIR} (cuando exista).
 
-  [ ] Para cada repo de código donde vayas a usar Claude:
+  [ ] Registrar el MCP en Claude Code (RECOMENDADO: scope user, 1 comando):
+      claude mcp add -s user obsidian-vault-team-context -- node "${MCP_DIR}/dist/index.js"
+      # Verificá: claude mcp list | grep obsidian
+      # (Alternativa: Settings UI en Claude Code — ver CONFIGURACION-MCP.md § Paso 3)
+
+  [ ] Si en cambio querés MCP solo para repos puntuales (scope project):
       cp ${ONBOARDING_DIR}/templates/mcp.json <repo>/.mcp.json
-      # editar args si tu MCP_DIR difiere del default ~/obsidian-vault-mcp
+      # editar args con el path real a ${MCP_DIR}/dist/index.js
 
   [ ] gh auth login  (si todavía no lo hiciste)
 

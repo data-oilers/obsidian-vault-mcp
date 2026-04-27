@@ -134,41 +134,65 @@ Si conecta correctamente a GitHub org, verás repos descubiertos al llamar a `li
 
 ## Paso 3: Registrar MCP en Claude Code
 
-### 3a. Abre Claude Code Settings
-
-En Claude Code:
-- Click en Settings (engranaje)
-- Busca "MCP Servers" o "Model Context Protocol"
-
-### 3b. Agrega nuevo server
-
-Click "Add MCP Server" y completa:
-
-```
-Name: obsidian-vault-team-context
-Type: StdIO
-Command: node
-Arguments: <ruta absoluta a dist/index.js>
-```
-
-Ejemplos por OS:
+### Método recomendado: CLI (1 comando)
 
 ```bash
-# macOS
-/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+# macOS / Linux
+claude mcp add -s user obsidian-vault-team-context -- node "$HOME/obsidian-vault-mcp/dist/index.js"
 
-# Linux
-/home/<usuario>/obsidian-vault-mcp/dist/index.js
-
-# Windows (forward slash recomendado en JSON)
-C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+# Windows (PowerShell)
+claude mcp add -s user obsidian-vault-team-context -- node "C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js"
 ```
 
-**Nota:** La ruta DEBE ser absoluta y DEBE apuntar a `dist/index.js`. En Windows usá `/` o `\\` (doble backslash) — no `\` solo.
+Ajustá el path al lugar real donde clonaste el repo (ej: `~/Development/obsidian-vault-mcp/dist/index.js`).
 
-### 3c. Reinicia Claude Code
+**Scopes disponibles** (`-s`):
+- `user` — registrado en `~/.claude.json`, disponible en todos los proyectos. **Recomendado** para este MCP.
+- `project` — crea `.mcp.json` en el repo actual, lo comparte el equipo via git.
+- `local` (default si no pasás `-s`) — solo este checkout, no se comparte.
 
-Cierra y reabre Claude Code completamente para que cargue el servidor.
+Verificá que arrancó OK:
+
+```bash
+claude mcp list | grep obsidian
+# Esperado: obsidian-vault-team-context: node ... - ✓ Connected
+```
+
+Si querés removerlo después: `claude mcp remove obsidian-vault-team-context -s user`.
+
+### Método alternativo: Settings UI
+
+Si preferís la UI:
+
+1. Abrí Claude Code Settings → buscá "MCP Servers" o "Model Context Protocol"
+2. Click "Add MCP Server"
+3. Completá:
+
+   ```
+   Name: obsidian-vault-team-context
+   Type: StdIO
+   Command: node
+   Arguments: <ruta absoluta a dist/index.js>
+   ```
+
+   Ejemplos de path por OS:
+
+   ```bash
+   # macOS
+   /Users/<usuario>/obsidian-vault-mcp/dist/index.js
+
+   # Linux
+   /home/<usuario>/obsidian-vault-mcp/dist/index.js
+
+   # Windows (forward slash recomendado en JSON)
+   C:/Users/<usuario>/obsidian-vault-mcp/dist/index.js
+   ```
+
+   **Nota:** La ruta DEBE ser absoluta y apuntar a `dist/index.js`. En Windows usá `/` o `\\` — no `\` solo.
+
+### Reiniciá Claude Code
+
+Cerrá y reabrí Claude Code completamente para que las tools del MCP queden disponibles en sesiones nuevas.
 
 ---
 

@@ -35,13 +35,13 @@ Solo si las tenés clonadas en tu disco local y las declaraste en el `VAULTS` de
 Hasta que upstream refactorice a config externa: editá `~/obsidian-vault-mcp/src/config.ts`, agregá la entrada al objeto `VAULTS`, `npm run build`, reiniciá Claude. Si te molesta tocar TS, coordinar con quien mantiene el repo para refactor.
 
 ### ¿Cómo agrego un nuevo repo al ecosistema vault?
-1. Crear repo privado `dataoilers-vault-<nombre>` en la org.
-2. Inicializarlo con el skeleton: `cp -r templates/vault-skeleton/* <repo>/`, `git init`, push.
-3. Agregarlo al meta repo como submodule: `git submodule add <url> <nombre>`.
-4. Cada persona del equipo agrega la nueva vault a su `src/config.ts` local del MCP y rebuildea.
+Ver [`08-NUEVA-SUBVAULT.md`](08-NUEVA-SUBVAULT.md) para el procedimiento completo. Resumen:
+1. En `pandora-refinery`, crear `01-projects/<nombre-repo>/` con subcarpetas `decisions/`, `specs/`, `postmortems/`, `runbooks/`, `docs/`. Copiar templates de `templates/`.
+2. Agregar el repo a `REPOS` en `src/config.ts` del MCP, o setear `REPO_<NAME>_PATH` en `.env`.
+3. Rebuild del MCP (`npm run build`) y reiniciar el proceso para que tome el cambio.
 
-### ¿Por qué submodules y no un monorepo único?
-Permisos granulares + commits limpios por repo + historia independiente. Trade-off: pelear un poco con submodules. Si el equipo crece y el dolor supera al valor, migramos a monorepo simple.
+### ¿Por qué single-vault y no multi-vault con submodules?
+Discutido y decidido: la fricción de submodules supera el beneficio para un equipo de nuestro tamaño. Single-vault permite wikilinks libres entre cualquier área del conocimiento, sin pensar en cross-repo. Si en algún momento necesitamos permisos granulares por área (ej. cliente que solo ve "su" carpeta), evaluamos migración. Por ahora KISS.
 
 ## MCP y Claude
 
@@ -90,7 +90,7 @@ O `query_memory` con query genérica: *"query_memory con from=hace-30-días"*.
 ## Flujo de trabajo
 
 ### ¿Cada cuánto hago pull del vault?
-Al arrancar el día. Si editás mucho, también pre-lunch y post-lunch. Nunca pushees sin haber pulled antes (evita conflictos de submodule).
+Al arrancar el día. Si editás mucho, también pre-lunch y post-lunch. Nunca pushees sin haber pulled antes (evita conflictos de merge). Si tenés el plugin Obsidian Git con "Pull on startup", se hace solo.
 
 ### ¿Qué NO va en la vault?
 - Código (va al repo de código).
@@ -99,13 +99,11 @@ Al arrancar el día. Si editás mucho, también pre-lunch y post-lunch. Nunca pu
 - Screenshots pesados sin comprimir (>2 MB).
 - Datos con PII de clientes.
 
-### ¿Puedo hacer `git push --force` en una subvault?
-Técnicamente sí, pero NO lo hagas salvo que seas el único que editó ese día. Si pusiste algo por error, preferir `git revert`.
+### ¿Puedo hacer `git push --force` en `pandora-refinery`?
+Técnicamente sí, pero NO lo hagas salvo que seas el único que editó ese día. Si pusiste algo por error, preferir `git revert`. Force push borra trabajo de compañeros si no sincronizaron.
 
-### ¿Cada commit a una subvault me obliga a pushear el meta repo también?
-Sí, si querés que los compañeros vean tu cambio vía `git submodule update --remote`. El meta solo trackea el SHA de cada subvault — si no lo bumpeás, los otros siguen viendo la versión vieja.
-
-Tip: el script `~/bin/vault-push.sh` de [`04-VAULT-STRUCTURE.md`](04-VAULT-STRUCTURE.md) lo hace de una pasada.
+### Tip de productividad
+Activá el plugin **Obsidian Git** con auto-backup cada 5-10 min y "Pull on startup". Se ocupa del pull + commit + push automático sin que pienses en git.
 
 ### ¿Hay un canal para coordinar cambios grandes de vault?
 Acordar con el equipo. Por convención, cambios estructurales (nuevas carpetas top-level, renombrar subvaults, eliminar notas) se anuncian antes de pushear.
@@ -121,7 +119,7 @@ Dos razones posibles:
 2. El MCP carga una sola vez por proceso. Reiniciá Claude o dentro de Claude: `/mcp reconnect obsidian-vault-mcp`.
 
 ### Claude editó un archivo del vault con `Write` en lugar del MCP
-Pasa si pediste sin mencionar el vault. Reforzá: *"usando el MCP obsidian-vault-mcp, actualizá..."*. También agregar al `CLAUDE.md` del repo: "Prefiero el MCP obsidian-vault-mcp sobre `Write` para archivos dentro de `~/Documentos/PROYECTOS/dataoilers-vault-org/`".
+Pasa si pediste sin mencionar el vault. Reforzá: *"usando el MCP obsidian-vault-team-context, actualizá..."*. También agregar al `CLAUDE.md` del repo: "Prefiero el MCP obsidian-vault-team-context sobre `Write` para archivos dentro de `~/Development_dataoilers/pandora-refinery/`".
 
 ### Los compañeros ven los archivos `.md` pero Obsidian los renderiza raro
 Falta commitear el `.obsidian/` del meta vault. Asegurate que esa carpeta esté en git.

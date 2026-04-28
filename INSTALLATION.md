@@ -39,21 +39,21 @@ Si están en otra ruta, override con env vars en `.env`:
 
 ```bash
 # Linux
-VAULTS_FACULTAD_PATH=/home/juan/mis-notas/FACULTAD
+VAULTS_DATAOILERS_PATH=/home/juan/mis-notas/DATAOILERS
 
 # macOS
-VAULTS_FACULTAD_PATH=/Users/juan/Documents/FACULTAD
+VAULTS_DATAOILERS_PATH=/Users/juan/Documents/DATAOILERS
 
 # Windows (usar forward slash o doble backslash)
-VAULTS_FACULTAD_PATH=C:/Users/Juan/Obsidian/FACULTAD
+VAULTS_DATAOILERS_PATH=C:/Users/Juan/Obsidian/DATAOILERS
 ```
 
 Alternativa: editar `src/config.ts` directamente (requiere `npm run build` después):
 
 ```typescript
 export const VAULTS: Record<string, VaultConfig> = {
-  FACULTAD: {
-    path: "/Users/tu-user/path/to/FACULTAD",
+  DATAOILERS: {
+    path: "/Users/tu-user/path/to/DATAOILERS",
     hasGit: true,
   },
   // ...
@@ -180,7 +180,7 @@ Returns:
 ```
 Tool: create_meeting_note
 Inputs:
-  vault: "FACULTAD"
+  vault: "DATAOILERS"
   date: "2026-04-15"
   title: "Auth System Decision"
   participants: ["Alice", "Bob"]
@@ -198,7 +198,7 @@ Inputs:
 Returns:
 {
   success: true,
-  notePath: "Reuniones/2026-04-15-auth-system-decision.md",
+  notePath: "meetings/2026-04-15-auth-system-decision.md",
   message: "Nota de reunión creada y guardada en Memory"
 }
 ```

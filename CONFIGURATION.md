@@ -32,24 +32,24 @@ En tu `.env` (copiado de `.env.example`):
 
 ```bash
 # Descomentar y ajustar al path real:
-VAULTS_FACULTAD_PATH=/ruta/absoluta/a/FACULTAD
 VAULTS_DATAOILERS_PATH=/ruta/absoluta/a/DATAOILERS
-VAULTS_PROYECTOS_PATH=/ruta/absoluta/a/PROYECTOS
+VAULTS_DATAOILERS_PATH=/ruta/absoluta/a/DATAOILERS
+VAULTS_DATAOILERS_PATH=/ruta/absoluta/a/DATAOILERS
 ```
 
 Ejemplos por OS:
 
 ```bash
 # Linux
-VAULTS_FACULTAD_PATH=/home/juan/mis-notas/FACULTAD
+VAULTS_DATAOILERS_PATH=/home/juan/mis-notas/DATAOILERS
 
 # macOS
-VAULTS_FACULTAD_PATH=/Users/juan/Documents/FACULTAD
+VAULTS_DATAOILERS_PATH=/Users/juan/Documents/DATAOILERS
 
 # Windows (doble backslash o forward slash)
-VAULTS_FACULTAD_PATH=C:\\Users\\Juan\\Obsidian\\FACULTAD
+VAULTS_DATAOILERS_PATH=C:\\Users\\Juan\\Obsidian\\DATAOILERS
 # o
-VAULTS_FACULTAD_PATH=C:/Users/Juan/Obsidian/FACULTAD
+VAULTS_DATAOILERS_PATH=C:/Users/Juan/Obsidian/DATAOILERS
 ```
 
 Con esta opción **no hay que recompilar** — solo reiniciar el MCP.
@@ -60,10 +60,10 @@ Si preferís dejarlo fijo en código (útil si los vaults nunca cambian de lugar
 
 ```typescript
 export const VAULTS: Record<string, VaultConfig> = {
-  FACULTAD: {
-    name: "FACULTAD",
-    path: "/ruta/absoluta/a/FACULTAD",   // Linux/Mac
-    // path: "C:\\Users\\Juan\\Documentos\\FACULTAD",  // Windows
+  DATAOILERS: {
+    name: "DATAOILERS",
+    path: "/ruta/absoluta/a/DATAOILERS",   // Linux/Mac
+    // path: "C:\\Users\\Juan\\Documentos\\DATAOILERS",  // Windows
     hasGit: true,
   },
   // ...
@@ -234,7 +234,7 @@ Una vez todo configurado, prueba esto en Claude Code:
 ```
 Herramienta: create_meeting_note
 Inputs:
-  vault: FACULTAD
+  vault: DATAOILERS
   date: 2026-04-15
   title: Test Reunion
   participants: [Alice, Bob]
@@ -247,7 +247,7 @@ Inputs:
   summary: Testing the MCP connection
 ```
 
-Debería crear una nota en tu vault FACULTAD en la carpeta `Reuniones/`.
+Debería crear una nota en tu vault DATAOILERS en la carpeta `meetings/`.
 
 ---
 
@@ -277,7 +277,7 @@ Debería crear una nota en tu vault FACULTAD en la carpeta `Reuniones/`.
 
 Una vez que todo funcione:
 
-1. Lee `TOOLS.md` para ver qué herramientas tienes disponibles
+1. Lee `USAGE.md` para ver qué herramientas tienes disponibles
 2. Lee `EXAMPLES.md` para casos de uso reales
 3. Crea tu primer meeting note y prueba linking automático
 4. Prueba `advanced_search` para encontrar decisiones

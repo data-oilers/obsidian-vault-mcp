@@ -20,7 +20,19 @@ Editar `src/config.ts` para configurar:
 - `VAULTS`: Record con nombre, path en disco, y flag de git
 - `SUBJECT_TAGS`: Mapeo de nombres de materia/tema a slugs para tags
 
-Las rutas son absolutas desde el home del usuario. Al clonar en otra máquina, actualizar los paths.
+Override con env vars `VAULTS_<NAME>_PATH` en `.env` (ver `.env.example`). Default cross-platform: `~/Documentos/<NAME>`.
+
+## Convención de carpetas en vaults
+
+El MCP escribe a paths siguiendo **kebab-case + lowercase + inglés** y arquitectura **PARA + LYT Atlas**:
+
+- `meetings/` — notas de reunión (time-based)
+- `decisions/` — ADRs y decisiones
+- `_atlas/people/` — auto-gen MOCs por persona (1 nota por miembro del equipo)
+- `_atlas/repos/` — auto-gen MOCs por repo
+- `_atlas/team-map.md` — diagrama Mermaid del knowledge graph
+
+Para la convención completa del vault (PARA, kebab-case, singular vs plural en `_atlas/`, dónde va cada tipo de nota), ver [VAULT-CONVENTIONS.md](./VAULT-CONVENTIONS.md).
 
 ## Tools disponibles
 

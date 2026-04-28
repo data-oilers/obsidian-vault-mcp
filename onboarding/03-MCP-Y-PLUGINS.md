@@ -16,7 +16,7 @@ Los MCP (Model Context Protocol) servers son procesos que le dan a Claude herram
 Repo upstream: [`data-oilers/obsidian-vault-mcp`](https://github.com/data-oilers/obsidian-vault-mcp)
 
 > [!info] Fuente canónica
-> Los docs autoritativos viven en el repo. Este onboarding solo cubre lo que no está ahí (Linux/Mac, integración con nuestro flujo). Para detalles de cada tool y config: leer `QUICK-START.md`, `SETUP.md`, `CONFIGURACION-MCP.md`, `TOOLS.md`, `USAGE.md`, `EXAMPLES.md` del repo.
+> Los docs autoritativos viven en el repo. Este onboarding solo cubre lo que no está ahí (Linux/Mac, integración con nuestro flujo). Para detalles de cada tool y config: leer `QUICK-START.md`, `INSTALLATION.md`, `CONFIGURATION.md`, `USAGE.md`, `USAGE.md`, `EXAMPLES.md` del repo.
 
 ### Tools que expone (20+)
 
@@ -73,7 +73,7 @@ Editar la sección `VAULTS` con las **rutas reales** a tus vaults locales:
 export const VAULTS: Record<string, VaultConfig> = {
   DATAOILERS: {
     name: "DATAOILERS",
-    path: "/home/TU-USUARIO/Documentos/PROYECTOS/dataoilers-vault-org",
+    path: "/home/TU-USUARIO/Documentos/DATAOILERS/pandora-refinery",
     hasGit: true,
   },
   // agregar más si tenés otras vaults
@@ -82,17 +82,17 @@ export const VAULTS: Record<string, VaultConfig> = {
 
 ##### macOS
 ```typescript
-path: "/Users/TU-USUARIO/Documentos/PROYECTOS/dataoilers-vault-org",
+path: "/Users/TU-USUARIO/Documentos/DATAOILERS/pandora-refinery",
 ```
 
 ##### Windows
 ```typescript
-path: "C:\\Users\\TU-USUARIO\\Documentos\\PROYECTOS\\dataoilers-vault-org",
+path: "C:\\Users\\TU-USUARIO\\Documentos\\DATAOILERS\\pandora-refinery",
 // o con forward slashes:
-path: "C:/Users/TU-USUARIO/Documentos/PROYECTOS/dataoilers-vault-org",
+path: "C:/Users/TU-USUARIO/Documentos/DATAOILERS/pandora-refinery",
 ```
 
-> [!note] ¿Por qué hay vaults `FACULTAD` y `PROYECTOS` hardcoded?
+> [!note] ¿Por qué hay vaults `DATAOILERS` y `DATAOILERS` hardcoded?
 > Son legacy del MCP original (uso personal de un miembro). Si no los tenés, eliminalos del `VAULTS` y del enum de `src/index.ts`. No rompe nada.
 
 #### c. Rebuild tras cambios
@@ -143,7 +143,7 @@ Si devuelve JSON (aunque sea vacío `{ "total": 0, "repos": [] }`), el MCP funci
 
 ### Troubleshooting específico
 
-Ver `CONFIGURACION-MCP.md § Troubleshooting` y `SETUP.md § Troubleshooting` del repo upstream. Los clásicos:
+Ver `CONFIGURATION.md § Troubleshooting` y `INSTALLATION.md § Troubleshooting` del repo upstream. Los clásicos:
 
 - **"Vault no encontrado"** → path en `src/config.ts` no existe en disco, o no escapaste backslashes en Windows.
 - **"Participantes inválidos"** en `create_meeting_note` → el nombre no coincide con `TEAM_MEMBERS` (case-sensitive).

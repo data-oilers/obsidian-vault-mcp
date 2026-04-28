@@ -4,3 +4,9 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# claude-mem auto-inyecta CLAUDE.md en cada subdirectorio donde Claude trabaja.
+# Ignoramos esas auto-injections pero mantenemos los CLAUDE.md legítimos.
+**/CLAUDE.md
+!/CLAUDE.md
+!/onboarding/templates/CLAUDE.md

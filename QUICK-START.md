@@ -74,25 +74,25 @@ Copia esto en Claude Code:
 Tool: create_meeting_note
 
 Inputs:
-  vault: FACULTAD
+  vault: DATAOILERS
   date: 2026-04-15
   title: Test Decision Linking
-  participants: [Alice, Bob]
+  participants: [Franco, Lautaro]
   decisions: ["Usar OAuth2 con PKCE", "HTTP-only secure cookies"]
   actionItems:
     - task: Implementar OAuth2
-      owner: Alice
+      owner: Franco
       dueDate: 2026-04-20
     - task: Revisar implementación
-      owner: Bob
+      owner: Lautaro
       dueDate: 2026-04-22
   summary: Probando el sistema Phase 2 de linking de decisiones
-  relatedRepos: []
+  relatedRepos: [itmind-infrastructure]
 ```
 
 **Esperado:** JSON con `success: true` y ruta de nota creada
 
-**Nota:** La nota se crea en `<vault FACULTAD>/Reuniones/2026-04-15-test-decision-linking.md` — por default `~/Documentos/FACULTAD/...` (cross-platform).
+**Nota:** La nota se crea en `<vault DATAOILERS>/meetings/2026-04-15-test-decision-linking.md`. El path real depende de `VAULTS_DATAOILERS_PATH` en tu `.env` (default `~/Documentos/DATAOILERS`, en uso real `~/Development_dataoilers/pandora-refinery`).
 
 ## Paso 4: Prueba búsqueda avanzada
 
@@ -156,10 +156,10 @@ node C:\Users\<usuario>\obsidian-vault-mcp\dist\index.js
 Si sale error, reporta el error exacto.
 
 ### "Vault no encontrado"
-El default es `~/Documentos/<NAME>` (cross-platform). Si tus vaults están en otra ruta, overrideá con `VAULTS_<NAME>_PATH` en `.env` — ver CONFIGURACION-MCP.md § Paso 1b.
+El default es `~/Documentos/<NAME>` (cross-platform). Si tus vaults están en otra ruta, overrideá con `VAULTS_<NAME>_PATH` en `.env` — ver CONFIGURATION.md § Paso 1b.
 
 ### "Error creando nota"
-Verifica que la carpeta `Reuniones/` existe dentro del vault. El MCP la crea sola solo en algunos flujos — crearla a mano si falla.
+Verifica que la carpeta `meetings/` existe dentro del vault. El MCP la crea sola solo en algunos flujos — crearla a mano si falla.
 
 ---
 

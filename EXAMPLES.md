@@ -8,7 +8,7 @@
 Herramienta: create_meeting_note
 
 Inputs:
-  vault: "FACULTAD"
+  vault: "DATAOILERS"
   date: "2026-04-15"
   title: "Sprint Planning - Authentication Refactor"
   participants: ["Alice", "Bob", "Charlie"]
@@ -41,13 +41,13 @@ Inputs:
 Output:
 {
   "success": true,
-  "notePath": "Reuniones/2026-04-15-sprint-planning-authentication-refactor.md",
+  "notePath": "meetings/2026-04-15-sprint-planning-authentication-refactor.md",
   "message": "Nota de reunión creada y guardada en Memory"
 }
 ```
 
 **Resultado:**
-- Nota creada en Obsidian: `FACULTAD/Reuniones/2026-04-15-sprint-planning...md`
+- Nota creada en Obsidian: `DATAOILERS/meetings/2026-04-15-sprint-planning...md`
 - Entrada guardada en Memory con todas las decisiones
 - Items de acción registrados con propietarios y fechas vencimiento
 

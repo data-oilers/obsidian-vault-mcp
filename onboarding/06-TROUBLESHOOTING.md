@@ -72,7 +72,7 @@ Reiniciar Claude.
 ### "Permission denied" al crear notas
 El MCP corre con tu usuario. Si la vault está en un path con permisos de root:
 ```bash
-sudo chown -R $USER:$USER ~/Documentos/PROYECTOS/dataoilers-vault-org
+sudo chown -R $USER:$USER ~/Development_dataoilers/pandora-refinery
 ```
 
 ## Obsidian + Git
@@ -81,31 +81,22 @@ sudo chown -R $USER:$USER ~/Documentos/PROYECTOS/dataoilers-vault-org
 Suele ser un plugin comunitario problemático. Abrir en modo seguro:
 - Ajustes → Plugins de la comunidad → desactivar todos → reiniciar → reactivar uno a uno.
 
-### `git submodule update --remote` no trae cambios
-El pointer del submodule en el meta repo está pineado a un commit viejo. El `--remote` debería traer el tip del branch configurado:
+### `git pull` en pandora-refinery no trae lo último
+Verificá que el remote esté bien:
 ```bash
-# ver qué branch trackea cada submódulo
-git config -f .gitmodules --get-regexp branch
-```
-Si no hay branch configurado, por default trackea `master`/`main`. Setear explícitamente:
-```bash
-git submodule set-branch --branch main itmind-infrastructure
-git commit -am "chore: set submodule branch"
+cd ~/Development_dataoilers/pandora-refinery
+git remote -v
+git fetch origin
+git status   # ¿está atrás?
+git pull
 ```
 
 ### Conflictos de merge en markdown de la vault
-- `git status` dentro de la subvault afectada.
-- Editar el archivo, resolver manualmente (los `<<<<<<<` / `>>>>>>>` son markdown válido, Obsidian te los muestra, resolvelos ahí).
+- `git status` para ver el archivo afectado.
+- Editar el archivo, resolver manualmente (los `<<<<<<<` / `>>>>>>>` son markdown válido, Obsidian te los muestra; resolvelos ahí).
 - `git add <archivo> && git commit`.
 
-Si pasa seguido: activar el plugin de Obsidian "Obsidian Git" con auto-backup corto (cada 5 min) para reducir la ventana de divergencia.
-
-### Al clonar el meta repo, las subvaults están vacías
-Te olvidaste `--recurse-submodules`:
-```bash
-cd ~/Documentos/PROYECTOS/dataoilers-vault-org
-git submodule update --init --recursive
-```
+Si pasa seguido: activar el plugin "Obsidian Git" con auto-backup corto (cada 5 min) para reducir la ventana de divergencia.
 
 ## Permisos / accesos
 
@@ -137,4 +128,4 @@ Antes de pingearme, chequeá:
 3. `git status` en la vault — no hay cambios sin commitear que estén causando líos?
 4. ¿El problema lo podés reproducir en un repo limpio?
 
-Si después de eso sigue, abrir una nota en el vault general: `Referencias/Troubleshooting-Claude.md` con el stacktrace y el contexto, y pingear en el canal del equipo.
+Si después de eso sigue, abrir una nota en el vault: `03-resources/troubleshooting-claude.md` con el stacktrace y el contexto, y pingear en el canal del equipo.

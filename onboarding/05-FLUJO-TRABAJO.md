@@ -5,18 +5,17 @@ Esto es cómo usar Claude + vault en el día a día, una vez todo está configur
 ## Al arrancar el día
 
 ```bash
-# sincronizar la vault
-cd ~/Documentos/PROYECTOS/dataoilers-vault-org
+# sincronizar el vault del equipo
+cd ~/Development_dataoilers/pandora-refinery
 git pull
-git submodule update --remote --merge
 ```
 
-O correr `~/bin/vault-sync.sh` si seguiste la sección de scripts en [`04-VAULT-STRUCTURE.md`](04-VAULT-STRUCTURE.md).
+Si tenés el plugin Obsidian Git con "Pull on startup" activado, esto pasa solo cuando abrís Obsidian.
 
 Después entrás al repo de código y abrís Claude:
 
 ```bash
-cd ~/Escritorio/DataOilers/itmind-infrastructure
+cd ~/Development_dataoilers/itmind-infrastructure
 claude
 ```
 
@@ -26,13 +25,15 @@ claude
 
 Regla: **si alguien del equipo puede necesitar entender esto sin vos en 3 meses, va a la vault**.
 
-| Situación | Carpeta |
+| Situación | Path en el vault |
 |---|---|
-| "Voy a cambiar X en Y, así lo pienso hacer" | `Specs/` |
-| "Decidimos A en vez de B por Z" | `Decisiones/` (ADR) |
-| "Se cayó producción porque X, la arreglé así" | `Postmortems/` |
-| "Cómo funciona la conexión con el servicio externo Y" | `Referencias/` |
-| "Comandos que uso todo el tiempo en este repo" | `Referencias/runbook.md` |
+| "Voy a cambiar X en Y, así lo pienso hacer" | `01-projects/<repo>/specs/` |
+| "Decidimos A en vez de B por Z" | `01-projects/<repo>/decisions/` (ADR) |
+| "Se cayó producción porque X, la arreglé así" | `01-projects/<repo>/postmortems/` |
+| "Cómo funciona la conexión con el servicio externo Y" | `01-projects/<repo>/docs/` o `03-resources/` |
+| "Comandos que uso todo el tiempo en este repo" | `01-projects/<repo>/runbooks/` |
+| Decisión transversal del equipo (no atada a un repo) | `decisions/` (top-level) |
+| Reunión del equipo | `meetings/` (creada por MCP) |
 
 Cosas que **no** van a la vault:
 - Código (va al repo)
@@ -44,7 +45,7 @@ Cosas que **no** van a la vault:
 El MCP `obsidian-vault-mcp` expone 20+ tools organizadas en 4 categorías: **Obsidian** (notas), **Git** (contexto de repos), **Meeting/Memory** (reuniones/decisiones/action items), **Linking** (commits ↔ decisiones).
 
 > [!info] Referencia completa
-> Ver [`TOOLS.md`](https://github.com/data-oilers/obsidian-vault-mcp/blob/main/TOOLS.md) del upstream para signatures detalladas de cada tool. Acá documento los prompts que mejor las disparan.
+> Ver [`USAGE.md`](../USAGE.md) para signatures detalladas de cada tool. Acá documento los prompts que mejor las disparan.
 
 ### Obsidian tools — notas en las vaults
 
@@ -55,12 +56,12 @@ El MCP `obsidian-vault-mcp` expone 20+ tools organizadas en 4 categorías: **Obs
 > *"Buscá 'Workload Identity' en la vault DATAOILERS."*
 
 #### `read_note` — leer una nota entera
-> *"Leeme V-02-FIX-01 del vault DATAOILERS/Specs."*
+> *"Leeme V-02-FIX-01 del vault DATAOILERS (path: 01-projects/itmind-infrastructure/specs/)."*
 
 Claude suele encadenar `search_notes` → `read_note` automáticamente si pedís "leeme la nota sobre X" sin path exacto.
 
 #### `create_note` — crear nota
-> *"Creá una nota en Specs/ de DATAOILERS con el diseño de la migración de Alembic. Tipo: research. Contexto: [...]."*
+> *"Creá una nota en 01-projects/itmind-infrastructure/specs/ del vault DATAOILERS con el diseño de la migración de Alembic. Tipo: research. Contexto: [...]."*
 
 #### `append_to_note` / `update_note`
 > *"Agregá al spec V-02-FIX-01 una sección bajo '## Validación' con el resultado de los smoke tests."*
@@ -140,10 +141,10 @@ Importante: `participants` y `owner` deben ser nombres **exactos** del `TEAM_MEM
 > *"Acabamos de reunirnos con Franco sobre el deploy QA bloqueado. Registrá la meeting con las decisiones y action items, y después corré auto_link_commits sobre la decisión principal para ver si algún commit de hoy ya la implementa."*
 
 #### Postmortem con contexto del repo
-> *"Generá un postmortem del incidente de hoy en QA. Primero traeme `get_repo_context` de enterprise-ai-platform (últimas 24h), después `list_action_items` para ver si quedó algo pendiente, y recién ahí creá la nota en Postmortems/ con timeline + root cause + action items nuevos."*
+> *"Generá un postmortem del incidente de hoy en QA. Primero traeme `get_repo_context` de enterprise-ai-platform (últimas 24h), después `list_action_items` para ver si quedó algo pendiente, y recién ahí creá la nota en `01-projects/enterprise-ai-platform/postmortems/` con timeline + root cause + action items nuevos."*
 
 #### Auditoría semanal
-> *"Dame un `get_team_context` de esta semana, listame los action items pendientes con dueDate vencido, y hacé una search en memory de las decisiones abiertas. Compilá todo en una nota `Referencias/auditoria-semanal-2026-04-24.md`."*
+> *"Dame un `get_team_context` de esta semana, listame los action items pendientes con dueDate vencido, y hacé una search en memory de las decisiones abiertas. Compilá todo en una nota `03-resources/auditoria-semanal-2026-04-24.md`."*
 
 #### Sincronizar decisión con el código
 > *"Leé la decisión de usar merge migrations (`query_memory` con filtro), después `get_file_history` sobre `migrations/` en enterprise-ai-platform, y finalmente `mark_decision_complete` si la decisión ya está implementada."*
@@ -165,28 +166,19 @@ Importante: `participants` y `owner` deben ser nombres **exactos** del `TEAM_MEM
 | `docs:` | nuevo documento, actualización mayor | `docs: agregar spec V-02-FIX-01` |
 | `fix:` | corregir info incorrecta | `fix: corregir paths en runbook Airflow` |
 | `chore:` | metadata, tags, links, cleanup | `chore: agregar wikilinks a Q-V-03` |
-| `refactor:` | reorganizar estructura | `refactor: mover postmortems Q1 a subcarpeta` |
-
-En la vault general (meta repo), los commits suelen ser:
-- `chore: bump <subvault> to <sha>` — cuando actualizás el puntero del submodule
+| `refactor:` | reorganizar estructura | `refactor: mover postmortems Q1 a 04-archive/` |
 
 ## Al terminar el día
 
 ```bash
-# si editaste alguna subvault
-cd ~/Documentos/PROYECTOS/dataoilers-vault-org/<subvault>
+# si editaste el vault
+cd ~/Development_dataoilers/pandora-refinery
 git add .
 git commit -m "docs: ..."
 git push
-
-# actualizar el meta repo
-cd ~/Documentos/PROYECTOS/dataoilers-vault-org
-git add <subvault>
-git commit -m "chore: bump <subvault>"
-git push
 ```
 
-O usar `~/bin/vault-push.sh` del script en [`04-VAULT-STRUCTURE.md`](04-VAULT-STRUCTURE.md).
+Si tenés Obsidian Git con auto-backup activo, esto pasa solo cada N minutos.
 
 ## Slash commands de Claude útiles
 

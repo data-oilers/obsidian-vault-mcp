@@ -27,12 +27,18 @@
 
 ## Vault de documentación
 
-La documentación canónica (specs, decisiones, postmortems) vive en:
+La documentación canónica (specs, decisiones, postmortems) vive en el vault del equipo `pandora-refinery`, dentro de la carpeta del repo:
 ```
-~/Documentos/PROYECTOS/dataoilers-vault-org/<nombre-repo>/
+~/Development_dataoilers/pandora-refinery/01-projects/<nombre-repo>/
+├── decisions/      # ADRs
+├── specs/          # RFCs / diseños
+├── postmortems/    # incidentes
+├── runbooks/       # comandos / playbooks
+├── docs/           # docs técnicas
+└── index.md        # overview del repo
 ```
 
-Ver convención global en `~/.claude/CLAUDE.md`.
+Ver convención global en `~/.claude/CLAUDE.md` y la guía completa en [`VAULT-CONVENTIONS.md`](https://github.com/data-oilers/obsidian-vault-mcp/blob/main/VAULT-CONVENTIONS.md) del repo del MCP.
 
 ## Comandos útiles
 
@@ -64,7 +70,7 @@ Ver convención global en `~/.claude/CLAUDE.md`.
 
 - <ej: "no correr migrations directo en prod, siempre por CD">
 - <ej: "no tocar `terraform/backend/` sin coordinar con el equipo">
-- <ej: "el MCP obsidian-vault necesita que la subvault esté clonada antes de abrir Claude acá">
+- <ej: "el MCP obsidian-vault necesita que pandora-refinery esté clonado y VAULTS_DATAOILERS_PATH apunte ahí en .env del MCP">
 
 ## Contactos
 

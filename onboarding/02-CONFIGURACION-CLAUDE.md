@@ -21,7 +21,7 @@ cp templates/CLAUDE.md ~/.claude/CLAUDE.md
 
 Este archivo le dice a Claude:
 - Qué convención usamos para vaults de Obsidian
-- Dónde viven las vaults en disco (`~/Documentos/PROYECTOS/<proyecto>/`)
+- Dónde viven las vaults en disco (`~/Documentos/DATAOILERS/<proyecto>/`)
 - Reglas de frontmatter, wikilinks, callouts
 - Que la documentación se publica **además** en la vault, no solo en el repo
 

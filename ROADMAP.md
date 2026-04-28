@@ -37,8 +37,8 @@ Sistema de contexto compartido para equipos que integra Obsidian vaults, reposit
 ### Documentación
 
 - FASE-1-ESPECIFICACION.md (español)
-- SETUP.md
-- TOOLS.md
+- INSTALLATION.md
+- USAGE.md
 - EXAMPLES.md
 
 ---

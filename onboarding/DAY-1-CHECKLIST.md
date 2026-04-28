@@ -61,7 +61,7 @@ Dentro de Claude, probá las dos vías principales:
 > *"Creá una meeting note: vault=DATAOILERS, date=2026-04-24, title='Onboarding <mi-usuario>', participants=[<mi-nombre>], decisions=['Completé el setup de Claude + MCP'], actionItems=[{task: 'Probar create_meeting_note', owner: <mi-nombre>, dueDate: 2026-04-25}], summary='Primera prueba del MCP del equipo'."*
 
 - [ ] Devuelve `success: true` y path de la nota
-- [ ] Aparece en `Reuniones/` de la vault
+- [ ] Aparece en `meetings/` de la vault
 - [ ] `query_memory` en una segunda conversación la encuentra
 
 ## Bloque 7 — Ready

@@ -69,10 +69,10 @@ Después de editar: `npm run build`.
 Crea una nota nueva con un template estructurado.
 
 ```
-vault: "FACULTAD" | "DATAOILERS" | "PROYECTOS"
+vault: "DATAOILERS"
 title: string
 content: string
-subject?: string          # requerido en FACULTAD (ej: "Inteligencia Artificial")
+subject?: string          # opcional: subcarpeta donde crear la nota (ej: "infrastructure", "data-engineering")
 type?: "general" | "clase" | "concepto" | "ejercicio"
 
 # Campos opcionales según type:
@@ -82,14 +82,16 @@ notes?, context?, references?
 
 > No sobreescribe un archivo existente. Usar `append_to_note` o `update_note` en ese caso.
 
+> [!note] Nota sobre `subject`
+> El parámetro `subject` viene de la versión académica del MCP (vault FACULTAD). En el vault del equipo (DATAOILERS / pandora-refinery) la organización es por carpetas PARA (`01-projects/`, `02-areas/`, etc), no por subject. Si querés escribir en un path específico, usá `Write` directo o pasá el path completo en `title` (ej: `title: "01-projects/itmind-infrastructure/specs/Q-40-nueva-feature.md"`).
+
 ### `read_note`
 
 Lee el contenido de una nota.
 
 ```
-vault: "FACULTAD"
-title: "Redes Neuronales"
-subject?: "Inteligencia Artificial"   # necesario para FACULTAD
+vault: "DATAOILERS"
+title: "Q-40-nueva-feature"   # busca en todo el vault
 ```
 
 ### `search_notes`
@@ -98,8 +100,8 @@ Busca texto en la vault (usa grep internamente).
 
 ```
 vault: "DATAOILERS"
-query: "transformer"
-subject?: "Inteligencia Artificial"   # restringe la búsqueda a esa carpeta
+query: "workload identity"
+subject?: "01-projects"   # opcional: restringe a esa subcarpeta
 ```
 
 ### `append_to_note`
@@ -107,10 +109,10 @@ subject?: "Inteligencia Artificial"   # restringe la búsqueda a esa carpeta
 Agrega contenido al final de una nota (o a una sección específica).
 
 ```
-vault: "FACULTAD"
-title: "Backpropagation"
-content: "## Clase 2\n\nNuevo contenido..."
-section?: "## Ejercicios"   # inserta justo después de esa sección
+vault: "DATAOILERS"
+title: "Q-40-nueva-feature"
+content: "## Validación\n\nSmoke tests OK en QA..."
+section?: "## Implementación"   # inserta justo después de esa sección
 ```
 
 ### `update_note`
@@ -119,17 +121,19 @@ Reescribe la nota completa.
 
 ```
 vault: "DATAOILERS"
-title: "Arquitectura v2"
-content: "# Arquitectura v2\n\n..."
+title: "01-projects/itmind-infrastructure/runbooks/deploy-qa"
+content: "# Deploy QA\n\n..."
 ```
 
 ### `list_subjects`
 
-Lista la estructura de carpetas/materias de una vault.
+Lista la estructura top-level de carpetas del vault.
 
 ```
-vault: "FACULTAD"
+vault: "DATAOILERS"
 ```
+
+> Devuelve los folders de primer nivel: `_atlas`, `01-projects`, `02-areas`, `03-resources`, `04-archive`, `meetings`, `decisions`, `templates`, etc.
 
 ---
 
@@ -156,7 +160,7 @@ summary?: "Definimos el roadmap técnico para Q2..."
 relatedRepos?: ["enterprise-ai-platform"]
 ```
 
-Guarda en el vault en `Reuniones/YYYY-MM-DD-slug.md` y retorna los IDs de decisiones y action items creados en Memory.
+Guarda en el vault en `meetings/YYYY-MM-DD-slug.md` y retorna los IDs de decisiones y action items creados en Memory.
 
 Participantes válidos: `Emiliano`, `Emanuel`, `Agustin`, `Lautaro`, `Franco`, `Branco`, `Gaston`, `Eliezer`.
 
@@ -186,7 +190,7 @@ limit?: 20
 Historial de commits de un archivo específico.
 
 ```
-repo: "poc-macro-riesgo"
+repo: "itmind-infrastructure"
 filePath: "src/models/riesgo.py"
 limit?: 20
 ```
@@ -401,13 +405,13 @@ repo: "enterprise-ai-platform"
 
 Genera (o sobreescribe) notas en el vault a partir del grafo y Memory:
 
-- `Personas/<nombre>.md` — reuniones, decisiones y action items por persona
-- `Repos/<repo>.md` — decisiones y contribuidores por repo
-- `Decisiones/<slug>.md` — detalle de cada decisión con commits linkeados
-- `_Mapa del Equipo.md` — MOC con diagrama Mermaid embebido
+- `_atlas/people/<nombre>.md` — reuniones, decisiones y action items por persona
+- `_atlas/repos/<repo>.md` — decisiones y contribuidores por repo
+- `decisions/<slug>.md` — detalle de cada decisión con commits linkeados
+- `_atlas/team-map.md` — MOC con diagrama Mermaid embebido
 
 ```
-vault: "DATAOILERS" | "FACULTAD" | "PROYECTOS"
+vault: "DATAOILERS"
 ```
 
 Luego abrir el vault en Obsidian → Graph View (`Ctrl+G`) para ver las conexiones visuales.
@@ -420,14 +424,14 @@ Paths default (cross-platform, basados en `homedir()`). Override via env vars `V
 
 | Vault | Path default | Git |
 |-------|--------------|-----|
-| `FACULTAD` | `~/Documentos/FACULTAD` | sí |
+| `DATAOILERS` | `~/Documentos/DATAOILERS` | sí |
 | `DATAOILERS` | `~/Documentos/DATAOILERS` | no |
-| `PROYECTOS` | `~/Documentos/PROYECTOS` | no |
+| `DATAOILERS` | `~/Documentos/DATAOILERS` | no |
 
 | Repo | Org | Path local default |
 |------|-----|--------------------|
 | `enterprise-ai-platform` | data-oilers | `~/repos/data-oilers/enterprise-ai-platform` |
-| `poc-macro-riesgo` | data-oilers | `~/repos/data-oilers/poc-macro-riesgo` |
+| `itmind-infrastructure` | data-oilers | `~/repos/data-oilers/itmind-infrastructure` |
 
 > En Windows, `~` se expande a `C:\Users\<usuario>` (via `os.homedir()`).
 

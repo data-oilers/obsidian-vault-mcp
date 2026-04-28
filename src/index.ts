@@ -395,7 +395,7 @@ server.tool(
 // Obsidian Sync (Phase 3+)
 server.tool(
   "sync_graph_to_obsidian",
-  "Sincronizar el knowledge graph al vault de Obsidian: crea notas para Personas/, Repos/, Decisiones/ con wikilinks entre ellas, y una nota MOC '_Mapa del Equipo.md' con diagrama Mermaid. Después de correr, abrir Graph View en Obsidian (Ctrl+G) para ver el cerebro visual.",
+  "Sincronizar el knowledge graph al vault de Obsidian: crea MOCs auto-generadas en _atlas/people/, _atlas/repos/ y notas en decisions/ con wikilinks entre ellas, más _atlas/team-map.md con diagrama Mermaid. Después de correr, abrir Graph View en Obsidian (Ctrl+G) para ver el cerebro visual.",
   SyncGraphToObsidianInputSchema.shape,
   async (params: any) => {
     const result = await syncGraphToObsidian(params);

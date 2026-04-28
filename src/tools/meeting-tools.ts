@@ -109,7 +109,7 @@ function getNotePath(vaultName: string, input: CreateMeetingNoteInput): string {
   const slug = input.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const filename = `${year}-${month}-${day}-${slug}.md`;
   const vaultPath = VAULTS[vaultName as keyof typeof VAULTS].path;
-  const folder = join(vaultPath, "Reuniones");
+  const folder = join(vaultPath, "meetings");
 
   return join(folder, filename);
 }

@@ -27,9 +27,36 @@ Cuando trabajo en un repo de la org, cualquier **spec, decisión de arquitectura
 | `enterprise-ai-platform` | `dataoilers-vault-org/enterprise-ai-platform/` |
 | `<otros>` | `dataoilers-vault-org/<otros>/` |
 
-### Convenciones dentro de cada subvault
+### Convenciones dentro del vault
 
-- **Estructura fija**: `Specs/`, `Decisiones/`, `Postmortems/`, `Referencias/`
+**Naming**: kebab-case, todo minúsculas, en inglés. Sin espacios ni mayúsculas en paths.
+
+**Estructura top-level (PARA + LYT Atlas)**:
+
+```
+_atlas/                  ← ÚNICO nav hub: MOCs por tema + indices auto-gen
+  ├── moc-<tema>.md      ← MOCs curadas a mano (singular: airflow, clickhouse)
+  ├── <entity>-overview.md  ← narrativas curadas (people-overview.md, etc)
+  ├── team-map.md        ← MCP: Mermaid del knowledge graph
+  ├── people/            ← MCP: 1 MOC auto-gen por persona (plural)
+  └── repos/             ← MCP: 1 MOC auto-gen por repo
+_inbox/                  ← captura rápida (procesar y mover)
+01-projects/             ← work activo con deadline (ej: itmind-infrastructure/)
+02-areas/                ← responsabilidades ongoing (infrastructure/, data-engineering/, security/)
+03-resources/            ← refs, papers, glosarios, docs externos
+04-archive/              ← inactivos
+meetings/                ← MCP: notas de reunión time-based (create_meeting_note)
+decisions/               ← MCP: ADRs y decisiones (sync_graph_to_obsidian)
+templates/               ← templates de notas (decision-adr, spec, postmortem)
+```
+
+**Reglas**:
+- **Atlas es el único nav hub**: todo lo navegacional (MOCs, índices, mapas) vive en `_atlas/`.
+- **Singular vs plural en `_atlas/`**: archivo singular = curado a mano (`people-overview.md`); folder plural = auto-generado por el MCP (`people/`).
+- Numeración `01-`/`02-` con 2 dígitos para forzar orden semántico (activo → inactivo).
+- Subproyectos dentro de `01-projects/` siguen el nombre del repo: `01-projects/<repo-name>/`.
+- `meetings/` y `decisions/` son top-level porque son **time-based** (zona Calendar de LYT), no entity-based.
+
 - **Frontmatter estándar** en cada archivo:
   ```yaml
   ---

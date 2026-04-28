@@ -361,41 +361,43 @@ export async function syncGraphToObsidian(
     }
   }
 
-  // ── Personas/ ────────────────────────────────────────────────────────────
+  // ── _atlas/people/ ───────────────────────────────────────────────────────
+  // Auto-generated MOCs por persona. Convive con _atlas/people-overview.md
+  // (narrativa curada a mano). Convención LYT: plural=auto-gen, singular=curado.
 
-  const personasDir = join(vaultPath, "Personas");
-  ensureDir(personasDir);
+  const peopleDir = join(vaultPath, "_atlas", "people");
+  ensureDir(peopleDir);
 
   for (const [name, person] of knownPeople) {
     const repos = Array.from(personRepos.get(name) ?? []);
     const content = buildPersonNote(name, person.role, person.email, allEntries, repos);
-    writeNote(join(personasDir, `${name}.md`), content);
-    created.push(`Personas/${name}.md`);
+    writeNote(join(peopleDir, `${name}.md`), content);
+    created.push(`_atlas/people/${name}.md`);
   }
 
-  // ── Repos/ ───────────────────────────────────────────────────────────────
+  // ── _atlas/repos/ ────────────────────────────────────────────────────────
 
-  const reposDir = join(vaultPath, "Repos");
+  const reposDir = join(vaultPath, "_atlas", "repos");
   ensureDir(reposDir);
 
   for (const repoName of allRepos) {
     const contributors = Array.from(repoContributors.get(repoName) ?? []);
     const content = buildRepoNote(repoName, allEntries, contributors);
     writeNote(join(reposDir, `${repoName}.md`), content);
-    created.push(`Repos/${repoName}.md`);
+    created.push(`_atlas/repos/${repoName}.md`);
   }
 
-  // ── Decisiones/ ──────────────────────────────────────────────────────────
+  // ── decisions/ ───────────────────────────────────────────────────────────
 
-  const decisionesDir = join(vaultPath, "Decisiones");
-  ensureDir(decisionesDir);
+  const decisionsDir = join(vaultPath, "decisions");
+  ensureDir(decisionsDir);
 
   const decisions = allEntries.filter(e => e.type === "decision");
   for (const d of decisions) {
     const slug = slugify(d.title);
     const content = buildDecisionNote(d);
-    writeNote(join(decisionesDir, `${slug}.md`), content);
-    created.push(`Decisiones/${slug}.md`);
+    writeNote(join(decisionsDir, `${slug}.md`), content);
+    created.push(`decisions/${slug}.md`);
   }
 
   // ── _Mapa del Equipo.md (MOC) ────────────────────────────────────────────
@@ -415,8 +417,10 @@ export async function syncGraphToObsidian(
     gitEdges
   );
 
-  writeNote(join(vaultPath, "_Mapa del Equipo.md"), moc);
-  created.push("_Mapa del Equipo.md");
+  const atlasDir = join(vaultPath, "_atlas");
+  ensureDir(atlasDir);
+  writeNote(join(atlasDir, "team-map.md"), moc);
+  created.push("_atlas/team-map.md");
 
   return JSON.stringify(
     {

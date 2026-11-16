@@ -68,10 +68,12 @@ export const TEAM_MEMBERS: TeamMember[] = [
 export const VAULTS: Record<string, VaultConfig> = {
   DATAOILERS: {
     name: "DATAOILERS",
-    // OJO: este path hoy apunta a logs de infra (D-xx/Q-xx/V-xx), no a la vault de coordinacion.
-    // Nombre probablemente mal puesto — confirmar con quien lo configuro antes de reasignarlo.
+    // Vault técnica/metodológica personal (logs de deploy/QA/validación D-xx/Q-xx/V-xx
+    // + lineamientos de arquitectura) — distinta de pandora-refinery (coordinación general).
     path: process.env.VAULTS_DATAOILERS_PATH || join(HOME, "Documentos", "DATAOILERS"),
-    hasGit: true,
+    // No es un repo git (carpeta plana de notas) — estaba en true, rompía cualquier
+    // tool que intentara correr git contra este path.
+    hasGit: false,
   },
   PANDORA_REFINERY: {
     name: "PANDORA_REFINERY",
